@@ -4,32 +4,42 @@
 
 <br>
 
-## Instructions
+## Solution
 
-We have a number of [**log sources**](https://github.com/sesolabor/coding-challenge/blob/master/lib/log-source.js).  Each log source contains N log entries.  Each entry is a javascript object with a timestamp and message.  We don't know the number of log entries each source contains - however - we do know that the entries within each source are sorted 🕒 **chronologically** 🕒.
+The problem is a bit confusing, I tried to first extract the logEntry content by mapping each LogSource and extracting the logEntry with .pop(). I used the .sort() method to sort the date property in chronological order(most recent to least). If our logEntry is not null we print the date and message using the provided .print() function.
 
-### The Objectives:
-1. ***Drain all of the log sources*** for both the synchronous and asynchronous solutions.
-    - [Synchronous](https://github.com/sesolabor/coding-challenge/blob/31313e303c53cebb96fa02f3aab473dd011e1d16/lib/log-source.js#L37)
-    - [Asynchronous](https://github.com/sesolabor/coding-challenge/blob/31313e303c53cebb96fa02f3aab473dd011e1d16/lib/log-source.js#L45)
-1. Print all of the entries, across all of the sources, in chronological order.
-    - We don't need to store the log entries, just print them to stdout.
-1. Do this *efficiently*. There are time and space complexities afoot!
+<br>
 
-We expect candidates to spend 1-3 hours on this exercise.
+## Algorithm
+For the specific algorithm at play here I'm unable to implement it but I believe it is mergesort. We are given k sorted LogSources, each LogSource containing n LogEntries. For this specific algorithm we are given an array, and then run mergesort on the array.
 
-**We want to see you flex your CS muscles!!! Use the appropriate data structures to satisfy the time and space complexities inherent to the problem!!!**
+1.) We divide the lists recursively until we each our base case.
 
-## Pointers & Callouts
+[[8-30 -> 8-29],[8-27 -> 8-25...],[8-24 -> 8-22...],[8-21 -> 8-19...]]
 
-* We don't know how many logs each source contains.  A source could contain millions of entries and be exabytes in size! In other words, reading the entirety of a log source into memory won't work well.
-* Log sources could contain logs from last year, from yesterday, even from 100 years ago. We won't know the timeframe of a log source until we start looking.
-* Consider what would happen when asked to merge 1 million log sources.  Where might bottlenecks arise?
+[[8-30 -> 8-29],[8-27 -> 8-25...]]    [[8-24 -> 8-22...],[8-21 -> 8-19...]]
 
-There are two parts of the challenge which you'll see when diving into things.  You can get started by running `npm start`.
+[8-30 -> 8-29]   [8-27 -> 8-25...]   [8-24 -> 8-22...]   [8-21 -> 8-19...]
 
-## Submitting
 
-Create a GitHub repo and email your point of contact the link.
 
-If - for whatever reason - you cannot create a GitHub repo for this challenge, it is also acceptable to 'zip' the directory and provide your submission as an email attachment.
+2.) Merge the LogEntries in sorted order.
+
+[8-30 -> 8-29]   [8-27 -> 8-25...]   [8-24 -> 8-22...]   [8-21 -> 8-19...]
+
+[[8-30, 8-29, 8-27, 8-25]]    [[8-24,8-22,8-21,8-19]]
+
+[[8-30, 8-29, 8-27, 8-25,8-24,8-22,8-21,8-19]]    
+
+
+<br>
+
+## Runtime
+
+Time: O(N * logk) where N is the cost of evaluating every date at each recursive
+level and merging them together. We do this for the height of tree log k.
+
+Space: O(logk) depth of the tree
+
+
+
