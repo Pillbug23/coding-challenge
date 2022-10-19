@@ -6,31 +6,23 @@
 
 ## Solution
 
-The problem is a bit confusing, I tried to first extract the logEntry content by mapping each LogSource and extracting the logEntry with .pop(). I used the .sort() method to sort the date property in chronological order(most recent to least). If our logEntry is not null we print the date and message using the provided .print() function.
+Initialize a heap as a way of storing and looking up data that must be ordered chronologically by date.
 
 <br>
 
 ## Algorithm
-For the specific algorithm at play here I'm unable to implement it but I believe it is mergesort. We are given k sorted LogSources, each LogSource containing n LogEntries. For this specific algorithm we are given an array, and then run mergesort on the array.
 
-1.) We divide the lists recursively until we each our base case.
+Map each beginning entry from the log source by extracting date, msg and adding in id for lookup. Initialize heap and order entries by chronological date(earliest to latest). Iterate through heap for n sources. Retrieve next entry from same source as the beginning entry using id until source has been drained(no more entries). Move onto next source from our priority queue and begin iterating through its entries until empty.
 
-[[8-30 -> 8-29],[8-27 -> 8-25...],[8-24 -> 8-22...],[8-21 -> 8-19...]]
+<br>
 
-[[8-30 -> 8-29],[8-27 -> 8-25...]]    [[8-24 -> 8-22...],[8-21 -> 8-19...]]
+## Packages
+```
 
-[8-30 -> 8-29]   [8-27 -> 8-25...]   [8-24 -> 8-22...]   [8-21 -> 8-19...]
+# Install Heap (priority queue, binary tree) data structure with builtin methods
+npm i heap-js
 
-
-
-2.) Merge the LogEntries in sorted order.
-
-[8-30 -> 8-29]   [8-27 -> 8-25...]   [8-24 -> 8-22...]   [8-21 -> 8-19...]
-
-[[8-30, 8-29, 8-27, 8-25]]    [[8-24,8-22,8-21,8-19]]
-
-[[8-30, 8-29, 8-27, 8-25,8-24,8-22,8-21,8-19]]    
-
+```
 
 <br>
 

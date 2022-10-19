@@ -2,60 +2,49 @@
 
 const { range } = require("lodash");
 
-// Not sure I understand the question, N logSources each with n log entries
-// The log entries are in sorted order so we essentially have k sorted LogSources
-// Each sorted in chronological order from most recent to least
-// [[8-30,8-29,8-26],[8-31,8-29,8-25],...]
-// I believe the algorithm here is mergeSort, here is my pseudo solution
-const mergeKSources = (logSources, start, end) => {
-  //Base Case: We only have 1 logSource
-  if (start == end) {
-    return logSources[start]
-  }
-  let midpoint = start - (end - start) / 2
-  // [[8-30 -> 8-29],[8-27 -> 8-25...],[8-24 -> 8-22...],[8-21 -> 8-19...]]
-  // [[8-30 -> 8-29],[8-27 -> 8-25...]]
-  let leftHalf = mergeKSources(logSources, start, mid)
-  //[[8-24 -> 8-22...],[8-21 -> 8-19...]]
-  let rightHalf = mergeKSources(logSources, mid+1, mid)
-  // Merge helper function for merging two sorted list dates
-  // Essentially we want to combine into 1 sorted merged list
-  return merge(leftHalf,rightHalf)
-}
-
-const merge = (left,right) => {
-  while (left!= null || right !=  null) {
-    //Check for empty left/right logSource
-    if (!left) {
-      // do something with the rest of right entries
-    } else if (!right) {
-      // do something with the rest of left entries
-    } else if (left.date > right.date) {
-      //do something
-    } else {
-      //do something
-    }
-  }
-}
+// Priority Queue 
+const { Heap } = require('heap-js');
 
 module.exports = (logSources, printer) => {
-  //First grab the object properties last: {date and msg}
-  let logInfo = logSources.map((source,index) => {
+  // Comparator for heap chronological ordering
+  let PriorityComparator = (a, b) => a.date - b.date;
+  // Initialize new Heap
+  let priorityQueue = new Heap(PriorityComparator);
+  // Map each entry and assign it to new object with the relevant properties
+  // {id: ... , date: ... , msg: ...}
+  let logInfo = logSources.map((source,id) => {
     const logEntry = source.pop();
-    return logEntry
-  })
-  //Sort the log sources by chronological order
-  // [8-30 -> 8-29],[8-27 -> 8-25...],..]
-  let sortedLog = logInfo.sort((a,b) => b.date - a.date);
-  // Unable to identify where the merge sorting takes place
-  // Each LogSource has only 1 logEntry, can't find a way to iterate through a logSource
-  // mergeKSources(sortedLog, 0 , sortedLog.length - 1)
-  while (sortedLog.length > 0){
-    let entry = sortedLog.pop();
-    // if entry has valid content
-    if (entry) {
-      printer.print(entry);
+    if (!logEntry) {
+      return;
     }
+    // Add in index so each (next) entry can be grabbed using ID
+    // Each unique ID will correspond to one specific log source with N entries
+    const idx = {id: id}
+    // Merge objects
+    return Object.assign(idx,logEntry)
+  })
+  //Initialize priorityQueue with given log data
+  priorityQueue.init(logInfo);
+  // Iterate through the priority queue containing first entry of all log sources
+  // Each entry of each source will be popped chronologically
+  while (priorityQueue.length) {
+    //Pop the specific entry
+    let entry = priorityQueue.pop()
+    //Get the id of our current entry
+    let entryID = entry.id
+    printer.print(entry)
+    // Grab the next entry from that specific log source
+    entry = logSources[entryID].pop()
+    // If log source of that specific ID has no more entries
+    // Check if log entry is undefined
+    if (!entry) {
+      // ID is drained and no longer has any entries
+      break;
+    }
+    entry.id = entryID
+    // PriorityQueue will push the next entry from the list 
+    // Not specifically from current to ensure merge order
+    priorityQueue.push(entry)
   }
-  printer.done();
+  printer.done()
 };
